@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>D&D - Controle de Combate</title>
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+    <h1>Controle de Combate - D&D</h1>
+
+    <div class="controle">
+        <input type="text" id="nome" placeholder="Nome" />
+        <input type="number" id="vida" placeholder="Vida" />
+        <input type="number" id="iniciativa" placeholder="Iniciativa" />
+        <select id="tipo">
+            <option value="aliado">Aliado</option>
+            <option value="inimigo">Inimigo</option>
+        </select>
+        <button onclick="adicionarPersonagem()">Adicionar</button>
+
+        <input type="number" id="dano" placeholder="Dano" />
+        <label class="modo-area-toggle">
+            <input type="checkbox" id="emArea" onchange="toggleAreaInput()" />
+            Dano em Área
+        </label>
+        <button onclick="aplicarDano()">Aplicar Dano</button>
+
+        <input type="number" id="cura" placeholder="Cura" />
+        <label class="modo-area-toggle">
+            <input type="checkbox" id="curaEmArea" onchange="toggleCuraAreaInput()" />
+            Cura em Área
+        </label>
+        <button onclick="aplicarCura()">Aplicar Cura</button>
+
+        <button onclick="resetMapa()">Resetar Mapa</button>
+        <button onclick="toggleOcultarVida()">Ocultar Vida Inimigos</button>
+    </div>
+
+    <div class="container">
+        <div id="mapa"></div>
+        <div class="cards" id="cards"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

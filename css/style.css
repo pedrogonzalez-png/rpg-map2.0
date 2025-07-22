@@ -1,0 +1,279 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #eee;
+  padding: 20px;
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.controle {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.controle input,
+.controle select,
+.controle button {
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+}
+
+.controle button {
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+}
+
+.controle button:hover {
+  background-color: #555;
+}
+
+/* Mapa */
+#mapa {
+  display: grid;
+  grid-template-columns: repeat(10, 50px);
+  grid-template-rows: repeat(10, 50px);
+  gap: 2px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.celula {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  position: relative;
+  overflow: hidden;
+  width: 50px;
+  height: 50px;
+}
+
+.nome-celula {
+  font-size: 10px;
+  color: #666;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+}
+
+/* Container para múltiplos personagens */
+.container-personagens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.personagem {
+  font-size: 10px;
+  padding: 2px 4px;
+  margin: 1px;
+  border-radius: 3px;
+  text-align: center;
+  color: #fff;
+  background-color: #444;
+  cursor: grab;
+  min-width: 20px;
+  max-width: 100%;
+}
+
+.personagem.aliado {
+  background-color: green;
+}
+
+.personagem.inimigo {
+  background-color: red;
+}
+
+.personagem.neutro {
+  background-color: gray;
+}
+
+/* Efeitos visuais dano e cura no mapa */
+.dano,
+.cura {
+  position: absolute;
+  font-weight: bold;
+  font-size: 16px;
+  left: 50%;
+  top: 10%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: subir 1s ease-out forwards;
+  z-index: 999;
+}
+
+.dano {
+  color: red;
+}
+
+.cura {
+  color: limegreen;
+}
+
+@keyframes subir {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+}
+
+/* Cards */
+#cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.card {
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  width: 120px;
+  box-shadow: 0 0 5px #000;
+  text-align: center;
+  position: relative;
+  will-change: transform, opacity;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* --- Animações --- */
+
+/* ===================== */
+/* 1. ANIMAÇÃO DE CURA   */
+/* ===================== */
+@keyframes brilhoCura {
+  0% {
+    box-shadow: 0 0 5px rgb(50, 205, 50);
+    transform: rotateY(0deg);
+    background-color: rgb(50, 205, 50);
+  }
+  50% {
+    box-shadow: 0 0 15px rgb(50, 205, 50);
+    transform: rotateY(180deg);
+  }
+  100% {
+    box-shadow: 0 0 5px rgb(50, 205, 50);
+    transform: rotateY(360deg);
+  }
+}
+
+.card-cura {
+  animation: brilhoCura 1s ease forwards;
+  border: 3px solid rgb(50, 205, 50) !important;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+/* ======================= */
+/* 2. ANIMAÇÃO DE DANO     */
+/* ======================= */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-7px);
+  }
+  40%,
+  80% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes piscarVermelho {
+  0%,
+  100% {
+    background-color: red;
+  }
+  50% {
+    background-color: darkred;
+  }
+}
+
+.card-dano {
+  animation: shake 0.5s ease, piscarVermelho 0.5s ease;
+  border: 3px solid red !important;
+}
+
+/* ============================= */
+/* 3. ANIMAÇÃO DE MORTE          */
+/* ============================= */
+@keyframes morrer {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+.card-morrendo {
+  animation: morrer 1s ease forwards;
+}
+
+.card-dano {
+  animation: shake 0.5s ease, piscarVermelho 0.5s ease;
+  border: 3px solid red !important;
+}
+
+/* Botão do card */
+.card button {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  background: none;
+  color: #999;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  color: #f00;
+}
+
+/* Modo de seleção de dano ou cura em área */
+.celula.afetado {
+  outline: 2px dashed yellow;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  #mapa {
+    grid-template-columns: repeat(10, 35px);
+    grid-template-rows: repeat(10, 35px);
+  }
+
+  .celula {
+    width: 35px;
+    height: 35px;
+  }
+
+  .cards {
+    width: 100%;
+    max-width: none;
+  }
+}
