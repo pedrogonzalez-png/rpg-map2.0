@@ -6,7 +6,7 @@ let cards = document.getElementById("cards");
 let personagens = JSON.parse(localStorage.getItem("personagens")) || [];
 let tamanho = 10;
 let selecionado = null;
-let modoArea = false; // para dano em área
+let modoArea = true; // para dano em área
 let modoCuraArea = false; // para cura em área
 let ocultarVidaInimigos = false;
 let ultimosDanoIds = []; // array para múltiplos danificados
@@ -281,7 +281,7 @@ function aplicarDanoCelula(celula, danoOverride = null) {
 }
 
 // ========================
-// 12. Aplicar cura em célula (um personagem)
+// 12. Aplicar cura em célula
 // ========================
 function aplicarCuraCelula(celula, curaOverride = null) {
   let x = parseInt(celula.dataset.x);
@@ -384,10 +384,8 @@ function toggleOcultarVida() {
 // ========================
 // 19. Listeners dos toggles de área
 // ========================
-document.getElementById("emArea").addEventListener("change", toggleAreaInput);
-document
-  .getElementById("curaEmArea")
-  .addEventListener("change", toggleCuraAreaInput);
+// document.getElementById("emArea").addEventListener("change", toggleAreaInput);
+// document.getElementById("curaEmArea").addEventListener("change", toggleCuraAreaInput);
 
 // ========================
 // 20. Inicialização
