@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8" />
     <title>D&D - Controle de Combate</title>
     <link rel="stylesheet" href="./css/style.css" />
 </head>
-
 <body>
     <h1>Controle de Combate - D&D</h1>
 
+    <!-- BARRA SUPERIOR: Apenas Criação de Personagens -->
     <div class="controle">
         <input type="text" id="nome" placeholder="Nome" />
         <input type="number" id="vida" placeholder="Vida" />
@@ -18,24 +17,127 @@
             <option value="aliado">Aliado</option>
             <option value="inimigo">Inimigo</option>
         </select>
-        <button onclick="adicionarPersonagem()">Adicionar</button>
+        <button onclick="adicionarPersonagem()">Adicionar Rápido</button>
 
-        <input type="number" id="dano" placeholder="Dano" />
-        <button onclick="aplicarDano()">Aplicar Dano</button>
-
-        <input type="number" id="cura" placeholder="Cura" />
-        <button onclick="aplicarCura()">Aplicar Cura</button>
-
-        <button onclick="resetMapa()">Resetar Mapa</button>
-        <button onclick="toggleOcultarVida()">Ocultar Vida Inimigos</button>
+        <button onclick="abrirNovaFicha()" style="background-color: #292929; color: #1e1e1e; font-weight: bold; margin-left: 15px;">📝 Criar Personagem Completo</button>
     </div>
 
+    <!-- ÁREA PRINCIPAL: Mapa na Esquerda e Painel na Direita -->
     <div class="container">
+        
+        <!-- LADO ESQUERDO: Mapa -->
         <div id="mapa"></div>
-        <div class="cards" id="cards"></div>
+        
+        <!-- LADO DIREITO: Painel de Ações + Lista de Cartões -->
+        <div class="painel-direito">
+            
+            <!-- CAIXA DE AÇÕES DE COMBATE -->
+            <div class="painel-acoes" style="margin-bottom: 15px;">
+                <h3 style="margin: 0 0 10px 0; color: #00ffd5; text-align: center; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 8px;">Ações e Combate</h3>
+                
+                <select id="origemAcao" title="Quem está agindo?" style="width: 100%; margin-bottom: 10px;">
+                    <option value="ambiente">Mestre / Ambiente</option>
+                </select>
+                
+                <input type="text" id="valorAcao" placeholder="Valor (Ex: 1d10+5)" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;" />
+                
+                <div class="radios-dano-cura">
+                    <label><input type="radio" name="modoClique" value="dano" checked /> ⚔️ Dano</label>
+                    <label><input type="radio" name="modoClique" value="cura" /> 💚 Cura</label>
+                </div>
+
+                <div style="display: flex; gap: 5px; margin-top: 10px;">
+                    <button onclick="resetMapa()" style="flex: 1; padding: 6px; font-size: 12px; background: #c62828; color: white; border: none; border-radius: 4px; cursor: pointer;">Resetar Mapa</button>
+                    <button onclick="toggleOcultarVida()" style="flex: 1; padding: 6px; font-size: 12px; background: #444; color: white; border: none; border-radius: 4px; cursor: pointer;">Ocultar Vida</button>
+                </div>
+            </div>
+
+            <!-- NOVO: MODO SOLO / AUTO-BATTLE -->
+            <div class="painel-acoes" style="border-color: #ff9800; margin-bottom: 15px;">
+                <h3 style="margin: 0 0 10px 0; color: #ff9800; text-align: center; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 8px;">🤖 Modo Solo / Auto-Battle</h3>
+                
+                <button onclick="invocarBotAleatorio()" style="width: 100%; margin-bottom: 10px; background: #e65100; font-weight: bold; border: none; border-radius: 4px; color: white; padding: 8px;">🎲 Invocar Inimigo Aleatório</button>
+                
+                <button id="btnIaBot" onclick="toggleIA()" style="width: 100%; margin-bottom: 10px; background: #333; color: #aaa; border: 1px solid #555; border-radius: 4px; padding: 8px;">Despertar IA Inimiga</button>
+                
+                <button id="btnAutoBattle" onclick="toggleAutoBattle()" style="width: 100%; background: #4a148c; color: #fff; font-weight: bold; border: 1px solid #aa00ff; border-radius: 4px; padding: 8px;">⚔️ Luta 100% Automática</button>
+            </div>
+
+            <!-- LISTA DE PERSONAGENS -->
+            <div class="cards" id="cards"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DA FICHA DE PERSONAGEM -->
+    <div id="modalFicha" class="modal-overlay" style="display: none;">
+        <div class="ficha-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h1 id="fichaNomeCabecalho" style="border: none; margin: 0;">Ficha de Personagem</h1>
+                <button onclick="fecharFicha()" style="background: #c62828; border:none; color:white; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Salvar e Fechar ✕</button>
+            </div>
+
+            <section class="info-basica" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px;">
+                <input type="text" id="fichaNome" placeholder="Nome do Personagem">
+                <input type="text" id="fichaRaca" placeholder="Raça">
+                <input type="text" id="fichaClasse" placeholder="Classe">
+                <input type="number" id="fichaNivel" placeholder="Nível" min="1" max="20">
+                <select id="fichaTipo" style="background-color: #333; border: 1px solid #555; color: #fff; border-radius: 5px; padding: 8px;">
+                    <option value="aliado">Aliado</option>
+                    <option value="inimigo">Inimigo</option>
+                </select>
+            </section>
+
+            <section class="atributos">
+                <h2>Atributos</h2>
+                <div class="atributo"><label>Força</label><input type="number" id="fichaFor"></div>
+                <div class="atributo"><label>Destreza</label><input type="number" id="fichaDes"></div>
+                <div class="atributo"><label>Constituição</label><input type="number" id="fichaCon"></div>
+                <div class="atributo"><label>Inteligência</label><input type="number" id="fichaInt"></div>
+                <div class="atributo"><label>Sabedoria</label><input type="number" id="fichaSab"></div>
+                <div class="atributo"><label>Carisma</label><input type="number" id="fichaCar"></div>
+            </section>
+
+            <section class="combate">
+                <h2>Combate</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <div><label style="font-size: 12px; color:#ccc;">CA</label><input type="number" id="fichaCA" placeholder="Armadura"></div>
+                    <div><label style="font-size: 12px; color:#ccc;">Vida Máxima</label><input type="number" id="fichaPV" placeholder="Pontos de Vida"></div>
+                    <div><label style="font-size: 12px; color:#ccc;">Iniciativa</label><input type="number" id="fichaInit" placeholder="Iniciativa"></div>
+                    <div><label style="font-size: 12px; color:#ccc;">Deslocamento</label><input type="text" id="fichaDesloc" placeholder="Ex: 9m"></div>
+                </div>
+            </section>
+
+            <section class="pericias">
+                <h2>Perícias</h2>
+                <textarea id="fichaPericias" placeholder="Acrobacia, Atletismo, Furtividade, etc..."></textarea>
+            </section>
+
+            <section class="ataques">
+                <h2>Ataques e Magias</h2>
+                <label for="ataque">Descrição do Ataque:</label>
+                <input type="text" id="ataque" placeholder="Ex: 2d6+4">
+
+                <div class="resultados-dano">
+                    <p><strong>Dano Mínimo:</strong> <span id="danoMin">-</span></p>
+                    <p><strong>Dano Médio:</strong> <span id="danoMedio">-</span></p>
+                    <p><strong>Dano Máximo:</strong> <span id="danoMax">-</span></p>
+                </div>
+                
+                <button onclick="enviarParaCombate()" style="margin-top: 15px; width: 100%; background-color: #00ffd5; color: #1e1e1e; font-weight: bold; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">⚔️ Enviar Ataque para o Grid</button>
+            </section>
+
+            <section class="equipamentos">
+                <h2>Equipamentos</h2>
+                <textarea id="fichaEquipamentos" placeholder="Mochila, corda, poção de cura..."></textarea>
+            </section>
+
+            <section class="habilidades">
+                <h2>Características & Habilidades</h2>
+                <textarea id="fichaHabilidades" placeholder="Sentidos aguçados, resistência a fogo, etc..."></textarea>
+            </section>
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
